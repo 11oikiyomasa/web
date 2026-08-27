@@ -17,8 +17,11 @@ class GameActivity : Activity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         gameView = GameView(this)
-        setContentView(gameView)
+        val touchSurface = TactileGameLayout(this)
+        touchSurface.addView(gameView, android.widget.FrameLayout.LayoutParams(-1, -1))
+        setContentView(touchSurface)
         applyImmersiveMode()
     }
 
