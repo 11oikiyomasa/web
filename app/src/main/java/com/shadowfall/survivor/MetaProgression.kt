@@ -34,17 +34,20 @@ object MetaProgression {
         return prefs
     }
 
-    private fun level(upgrade: Upgrade): Int = requirePrefs().getInt(upgrade.key, 0).coerceIn(0, MAX_LEVEL)
+    private fun upgradeLevel(upgrade: Upgrade): Int =
+        requirePrefs().getInt(upgrade.key, 0).coerceIn(0, MAX_LEVEL)
 
     fun souls(): Int = requirePrefs().getInt("souls", DEFAULT_SOULS).coerceAtLeast(0)
-    fun level(upgrade: Upgrade): Int = level(upgrade)
 
-    fun cost(upgrade: Upgrade): Int = 20 + level(upgrade) * 15
+    fun level(upgrade: Upgrade): Int = upgradeLevel(upgrade)
 
-    fun canPurchase(upgrade: Upgrade): Boolean = level(upgrade) < MAX_LEVEL && souls() >= cost(upgrade)
+    fun cost(upgrade: Upgrade): Int = 20 + upgradeLevel(upgrade) * 15
+
+    fun canPurchase(upgrade: Upgrade): Boolean =
+        upgradeLevel(upgrade) < MAX_LEVEL && souls() >= cost(upgrade)
 
     fun purchase(upgrade: Upgrade): Boolean {
-        val currentLevel = level(upgrade)
+        val currentLevel = upgradeLevel(upgrade)
         val price = cost(upgrade)
         if (currentLevel >= MAX_LEVEL || souls() < price) return false
         requirePrefs().edit()
@@ -56,9 +59,9 @@ object MetaProgression {
     }
 
     fun startingStats(): Stats = Stats(
-        maxHp = 100f + level(Upgrade.VITALITY) * 10f,
-        attack = 18f + level(Upgrade.MIGHT) * 2f,
-        moveSpeed = 260f + level(Upgrade.SWIFTNESS) * 8f
+        maxHp = 100f + upgradeLevel(Upgrade.VITALITY) * 10f,
+        attack = 18f + upgradeLevel(Upgrade.MIGHT) * 2f,
+        moveSpeed = 260f + upgradeLevel(Upgrade.SWIFTNESS) * 8f
     )
 
     fun awardRun(roomsCleared: Int, kills: Int, won: Boolean): Int {
